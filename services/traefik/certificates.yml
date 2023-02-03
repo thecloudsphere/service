@@ -1,0 +1,9 @@
+---
+tls:
+  certificates:
+    - certFile: /etc/traefik/certificates/cert/keycloak.demo.thecloudsphere.io.pem
+      keyFile: /etc/traefik/certificates/key/keycloak.demo.thecloudsphere.io.pem
+    - certFile: /etc/traefik/certificates/cert/api.demo.thecloudsphere.io.pem
+      keyFile: /etc/traefik/certificates/key/api.demo.thecloudsphere.io.pem
+    - certFile: /etc/traefik/certificates/cert/minio.demo.thecloudsphere.io.pem
+      keyFile: /etc/traefik/certificates/key/minio.demo.thecloudsphere.io.pem
