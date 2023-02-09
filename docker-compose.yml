@@ -1,7 +1,7 @@
 ---
 services:
   traefik:
-    image: traefik
+    image: ${TCS_IMAGE_TRAEFIK}
     restart: always
     command:
       - "--api.insecure=true"
@@ -20,7 +20,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   phpredisadmin:
-    image: erikdubbelboer/phpredisadmin
+    image: ${TCS_IMAGE_PHPREDISADMIN}
     restart: always
     environment:
       REDIS_1_HOST: redis
@@ -29,7 +29,7 @@ services:
       - ${TCS_LISTEN_ADDRESS_INTERNAL_SERVICES}:10000:80
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: ${TCS_IMAGE_PHPMYADMIN}
     restart: always
     environment:
       PMA_HOST: mariadb
@@ -40,7 +40,7 @@ services:
         condition: service_healthy
 
   mariadb:
-    image: mariadb
+    image: ${TCS_IMAGE_MARIADB}
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: ${TCS_DATABASE_ROOT_PASSWORD}
@@ -51,7 +51,7 @@ services:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
 
   minio:
-    image: minio/minio
+    image: ${TCS_IMAGE_MINIO}
     restart: always
     command: server /data --address ":9000" --console-address ":9001"
     ports:
@@ -67,7 +67,7 @@ services:
       - "traefik.http.routers.minio-secure.tls=true"
 
   opa:
-    image: openpolicyagent/opa:edge-rootless
+    image: ${TCS_IMAGE_OPA}
     restart: always
     command: run --server -c /config.yaml /tcs.rego
     volumes:
@@ -75,15 +75,15 @@ services:
       - ./files/opa/tcs.rego:/tcs.rego:ro
 
   redis:
-    image: redis
+    image: ${TCS_IMAGE_REDIS}
     restart: always
 
   rabbitmq:
-    image: rabbitmq
+    image: ${TCS_IMAGE_RABBITMQ}
     restart: always
 
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0
+    image: ${TCS_IMAGE_KEYCLOAK}
     restart: always
     command: start-dev --proxy edge --import-realm --http-port 80
     environment:
