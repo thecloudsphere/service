@@ -47,6 +47,8 @@ services:
       MARIADB_DATABASE: tcs
       MARIADB_USER: tcs
       MARIADB_PASSWORD: ${TCS_DATABASE_PASSWORD}
+    volumes:
+      - mariadb:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
 
@@ -58,6 +60,9 @@ services:
       - ${TCS_LISTEN_ADDRESS_INTERNAL_SERVICES}:9001:9001
     environment:
       MINIO_SERVER_URL: https://${TCS_DOMAIN_MINIO}
+    volumes:
+      - minio-1:/data1
+      - minio-2:/data2
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.minio.loadbalancer.server.port=9000"
@@ -158,6 +163,11 @@ services:
       - "traefik.http.routers.api-secure.rule=Host(`${TCS_DOMAIN_API}`)"
       - "traefik.http.routers.api-secure.entrypoints=https"
       - "traefik.http.routers.api-secure.tls=true"
+
+volumes:
+  mariadb:
+  minio-1:
+  minio-2:
 
 networks:
   default:
