@@ -1,5 +1,7 @@
 # The Cloudsphere as on-premise service
 
+This section describes how The Cloudsphere can be operated as an on-premise service.
+
 ## Overview
 
 ![Overview](./overview.png)
