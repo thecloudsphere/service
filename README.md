@@ -16,10 +16,16 @@ parameters is required.
 * 100 GByte storage
 
 DNS entries on the publicly accessible IP address of the virtual system are required
-for access to the individual services. TLS certificates are also required for these
-DNS entries. Self-signed certificates are possible.
+for access to the individual services. The following DNS entries are used by default.
 
-Access is via port 443/TCP (HTTPS).
+* api.demo.thecloudsphere.io
+* minio.demo.thecloudsphere.io
+* keycloak.demo.thecloudsphere.io
+
+TLS certificates are also required for these DNS entries. Self-signed certificates
+are possible.
+
+Access to all services is via port 443/TCP (HTTPS).
 
 ## Development environment
 
