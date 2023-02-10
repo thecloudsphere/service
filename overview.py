@@ -1,39 +1,39 @@
 from diagrams import Cluster, Diagram
 from diagrams.aws.general import User
-from diagrams.aws.compute import ECR
 from diagrams.aws.management import SystemsManagerAutomation
-from diagrams.aws.network import APIGateway
 from diagrams.aws.storage import S3
 from diagrams.custom import Custom
 from diagrams.k8s.ecosystem import Helm
+from diagrams.onprem.database import Mariadb
 from diagrams.onprem.iac import Ansible, Terraform
+from diagrams.onprem.inmemory import Redis
+from diagrams.onprem.network import Traefik
+from diagrams.onprem.vcs import Git
+from diagrams.programming.framework import Fastapi
+from diagrams.k8s.compute import Cronjob
+from diagrams.azure.identity import ActiveDirectory
 
 
 with Diagram(filename="overview"):
     with Cluster("External services / users"):
         user = User()
-        registry = ECR("Git server")
-        ldap = ECR("LDAP server")
-
-    with Cluster("Workload"):
-        infrastructure_1 = Custom("", "logos/diagrams.png")
-        infrastructure_2 = Custom("", "logos/diagrams.png")
-        infrastructure_3 = Custom("", "logos/diagrams.png")
+        registry = Git("Git server")
+        directory = ActiveDirectory("Directory")
 
     with Cluster("The Cloudsphere On-Premise Service"):
-        beat = APIGateway("Beat service")
-        api = APIGateway("API service")
+        beat = Cronjob("Beat service")
+        api = Fastapi("API service")
         orchestrator = SystemsManagerAutomation("Orchestrator service")
 
     with Cluster("Internal services"):
-        traefik = APIGateway("Traefik")
-        keycloak = APIGateway("Keycloak")
+        keycloak = Custom("Keycloak", "logos/keycloak.png")
+        mariadb = Mariadb("MariaDB")
+        opa = Custom("Open Policy Agent", "logos/opa.png")
+        phpmyadmin = Custom("phpMyAdmin", "logos/phpmyadmin.png")
+        phpredisadmin = Custom("phpRedisAdmin", "logos/phpredisadmin.png")
+        redis = Redis("Redis")
         storage = S3("MinIO")
-        mariadb = APIGateway("MariaDB")
-        redis = APIGateway("Redis")
-
-        phpmyadmin = ECR("phpMyAdmin")
-        phpredisadmin = ECR("phpRedisAdmin")
+        traefik = Traefik("Traefik")
 
     with Cluster("Infrastructure As Code"):
         ansible = Ansible("Ansible")
@@ -45,36 +45,43 @@ with Diagram(filename="overview"):
         k8s = Custom("Kubernetes", "logos/k8s.png")
         openstack = Custom("OpenStack", "logos/openstack.png")
 
+    with Cluster("Workload"):
+        infrastructure_1 = Custom("", "logos/diagrams.png")
+        infrastructure_2 = Custom("", "logos/diagrams.png")
+        infrastructure_3 = Custom("", "logos/diagrams.png")
+
     phpredisadmin >> redis
     phpmyadmin >> mariadb
 
-    traefik >> api
-    traefik >> keycloak
-    traefik >> storage
+    traefik - api
+    traefik - keycloak
+    traefik - storage
 
-    ldap << keycloak
-    keycloak << api
+    opa - api
 
-    redis >> api
+    directory - keycloak
+    keycloak - api
 
-    api >> redis
-    api >> mariadb
-    api >> storage
+    redis - api
 
-    beat >> redis
-    beat >> mariadb
+    api - redis
+    api - mariadb
+    api - storage
 
-    orchestrator >> redis
-    orchestrator >> mariadb
+    beat - redis
+    beat - mariadb
 
-    user >> traefik
+    orchestrator - redis
+    orchestrator - mariadb
+
+    user - traefik
 
     orchestrator >> ansible
     orchestrator >> helm
     orchestrator >> terraform
     orchestrator >> storage
 
-    registry >> orchestrator
+    registry - orchestrator
 
     ansible >> azure
     ansible >> k8s
