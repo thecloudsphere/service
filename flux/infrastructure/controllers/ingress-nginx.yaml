@@ -39,7 +39,7 @@ spec:
       service:
         type: "LoadBalancer"
         annotations:
-          dns.gardener.cloud/dnsnames: "*.tcs.23t-test.okeanos.dev"
+          dns.gardener.cloud/dnsnames: "*.tcs.example.com"
           dns.gardener.cloud/ttl: "600"
           dns.gardener.cloud/class: garden
     admissionWebhooks:
