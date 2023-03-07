@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: opa
+  namespace: opa
+spec:
+  values:
+    bootstrapPolicies:
+      tcs: |-
+        package tcs.authz
+        import future.keywords
+        import input.attributes.request.http
+        import input.request
+        default allow := false
+        allow if {
+          request.method == "GET"
+        }

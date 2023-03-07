@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: opa
+  namespace: opa
+spec:
+  chart:
+    spec:
+      chart: opa-kube-mgmt
+      version: "8.0.1"
+      sourceRef:
+        kind: HelmRepository
+        name: opa
+        namespace: opa
+  interval: 1m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      remediateLastFailure: false

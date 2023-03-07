@@ -1,0 +1,8 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: opa
+  namespace: opa
+spec:
+  interval: 5m
+  url: https://open-policy-agent.github.io/kube-mgmt/charts
