@@ -1,0 +1,15 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: minio
+  namespace: minio
+spec:
+  values:
+    defaultBuckets: data1, data2
+    ingress:
+      enabled: true
+      hostname: minio.tcs.23t-test.okeanos.dev
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      tls: true
