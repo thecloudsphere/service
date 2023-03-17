@@ -8,7 +8,7 @@ spec:
     defaultBuckets: data1, data2
     ingress:
       enabled: true
-      hostname: minio.tcs.23t-test.okeanos.dev
+      hostname: minio.tcs.example.com
       annotations:
         kubernetes.io/ingress.class: nginx
         cert-manager.io/cluster-issuer: letsencrypt-prod
