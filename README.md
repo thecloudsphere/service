@@ -1,3 +1,3 @@
-# The Cloudsphere as on-premise service
+# The Cloudsphere On-Premise
 
-Documentation: https://thecloudsphere.io/docs/service
+Documentation: https://thecloudsphere.io/docs/on-premise

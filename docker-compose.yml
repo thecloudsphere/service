@@ -19,26 +19,6 @@ services:
       - "./files/traefik/certificates.yml:/etc/traefik/dynamic/certificates.yml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
-  phpredisadmin:
-    image: ${TCS_IMAGE_PHPREDISADMIN}
-    restart: always
-    environment:
-      REDIS_1_HOST: redis
-      REDIS_1_NAME: redis
-    ports:
-      - ${TCS_LISTEN_ADDRESS_INTERNAL_SERVICES}:10000:80
-
-  phpmyadmin:
-    image: ${TCS_IMAGE_PHPMYADMIN}
-    restart: always
-    environment:
-      PMA_HOST: mariadb
-    ports:
-      - ${TCS_LISTEN_ADDRESS_INTERNAL_SERVICES}:10001:80
-    depends_on:
-      mariadb:
-        condition: service_healthy
-
   mariadb:
     image: ${TCS_IMAGE_MARIADB}
     restart: always
@@ -47,6 +27,8 @@ services:
       MARIADB_DATABASE: tcs
       MARIADB_USER: tcs
       MARIADB_PASSWORD: ${TCS_DATABASE_PASSWORD}
+    ports:
+      - ${TCS_LISTEN_ADDRESS_SERVICES}:3306:3306
     volumes:
       - mariadb:/var/lib/mysql
     healthcheck:
@@ -71,21 +53,11 @@ services:
       - "traefik.http.routers.minio-secure.entrypoints=https"
       - "traefik.http.routers.minio-secure.tls=true"
 
-  opa:
-    image: ${TCS_IMAGE_OPA}
-    restart: always
-    command: run --server -c /config.yaml /tcs.rego
-    volumes:
-      - ./files/opa/config.yaml:/config.yaml:ro
-      - ./files/opa/tcs.rego:/tcs.rego:ro
-
   redis:
     image: ${TCS_IMAGE_REDIS}
     restart: always
-
-  rabbitmq:
-    image: ${TCS_IMAGE_RABBITMQ}
-    restart: always
+    ports:
+      - ${TCS_LISTEN_ADDRESS_SERVICES}:6379:6379
 
   keycloak:
     image: ${TCS_IMAGE_KEYCLOAK}
@@ -112,7 +84,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - redis
-      - rabbitmq
 
   flower:
     image: ${TCS_IMAGE}
@@ -122,20 +93,8 @@ services:
       - ./tcs:/app
     depends_on:
       - redis
-      - rabbitmq
     ports:
       - ${TCS_LISTEN_ADDRESS_INTERNAL_SERVICES}:10002:5555
-
-  worker:
-    image: ${TCS_IMAGE}
-    restart: always
-    command: "python3 -m tcs.cmd.worker"
-    volumes:
-      - ./tcs:/app
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - redis
-      - rabbitmq
 
   api:
     image: ${TCS_IMAGE}
@@ -145,8 +104,6 @@ services:
       - ./tcs:/app
     depends_on:
       redis:
-        condition: service_started
-      rabbitmq:
         condition: service_started
       beat:
         condition: service_started
@@ -164,13 +121,17 @@ services:
       - "traefik.http.routers.api-secure.entrypoints=https"
       - "traefik.http.routers.api-secure.tls=true"
 
+  worker:
+    image: ${TCS_IMAGE}
+    restart: always
+    command: "python3 -m tcs.cmd.worker"
+    volumes:
+      - ./tcs:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - redis
+
 volumes:
   mariadb:
   minio-1:
   minio-2:
-
-networks:
-  default:
-    driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1400
