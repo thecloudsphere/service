@@ -84,15 +84,6 @@ services:
     depends_on:
       - redis
 
-  flower:
-    image: ${TCS_IMAGE}
-    restart: always
-    command: "python3 -m tcsapi.cmd.flower"
-    depends_on:
-      - redis
-    ports:
-      - ${TCS_LISTEN_ADDRESS_INTERNAL_SERVICES}:10002:5555
-
   api:
     image: ${TCS_IMAGE}
     restart: always
@@ -115,15 +106,6 @@ services:
       - "traefik.http.routers.api-secure.rule=Host(`${TCS_DOMAIN_API}`)"
       - "traefik.http.routers.api-secure.entrypoints=https"
       - "traefik.http.routers.api-secure.tls=true"
-
-  worker:
-    image: ${TCS_IMAGE}
-    restart: always
-    command: "python3 -m tcsapi.cmd.worker"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - redis
 
 volumes:
   mariadb:
