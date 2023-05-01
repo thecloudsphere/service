@@ -78,9 +78,8 @@ services:
   beat:
     image: ${TCS_IMAGE}
     restart: always
-    command: "python3 -m tcs.cmd.beat"
+    command: "python3 -m tcsapi.cmd.beat"
     volumes:
-      - ./tcs:/app
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - redis
@@ -88,9 +87,7 @@ services:
   flower:
     image: ${TCS_IMAGE}
     restart: always
-    command: "python3 -m tcs.cmd.flower"
-    volumes:
-      - ./tcs:/app
+    command: "python3 -m tcsapi.cmd.flower"
     depends_on:
       - redis
     ports:
@@ -99,9 +96,7 @@ services:
   api:
     image: ${TCS_IMAGE}
     restart: always
-    command: "python3 -m tcs.cmd.api"
-    volumes:
-      - ./tcs:/app
+    command: "python3 -m tcsapi.cmd.api"
     depends_on:
       redis:
         condition: service_started
@@ -124,9 +119,8 @@ services:
   worker:
     image: ${TCS_IMAGE}
     restart: always
-    command: "python3 -m tcs.cmd.worker"
+    command: "python3 -m tcsapi.cmd.worker"
     volumes:
-      - ./tcs:/app
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - redis
